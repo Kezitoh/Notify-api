@@ -78,9 +78,19 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return true;
     }
 
+    // public static function checkUserValid($user) {
+    //     if(User::checkUserActive($user) &&
+    //     User::checkUserLogged($user)) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
     public static function checkUserActive($user) {
         $res = DB::select("SELECT is_active, is_online FROM users WHERE user = '$user';");
-        if($res[0]->is_active == 1) {return true;}
+        if($res[0]->is_active == 1) {
+            return true;
+        }
         return false;
     }
 

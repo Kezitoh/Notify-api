@@ -79,7 +79,7 @@ class AuthController extends Controller
 
         $credentials = $request->only(["user", "password"]);
 
-        if(!$token = Auth::attempt($credentials)) {
+        if(!$token = Auth::attempt($credentials) || !User::checkUserActive($request->user)) {
             //login failed
             return response()->json([
                 'ok' => false,
@@ -116,7 +116,8 @@ class AuthController extends Controller
             "user" => $user->user,
             "name" => $user->name,
             "surname" => $user->surname,
-            "email" => $user->email
+            "email" => $user->email,
+            "has_logged" => $user->has_logged
         ]);
     }
 
