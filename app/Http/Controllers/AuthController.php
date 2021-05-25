@@ -47,9 +47,16 @@ class AuthController extends Controller
         ]);
 
         try{
-            $request->request()->add(["password" => "prueba"]);
+            $request->request->add(['password' => 'prueba']);
             $userCtrl = new UserController();
             $user = $userCtrl->create($request);
+            if(!$user) {
+        
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'ERROR CREATING USER'
+                ]);
+            }
             return response()->json([
                 "user" => $user, 
                 "message" => "CREATED"
