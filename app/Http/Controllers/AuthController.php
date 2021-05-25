@@ -79,7 +79,7 @@ class AuthController extends Controller
 
         $credentials = $request->only(["user", "password"]);
 
-        if(!$token = Auth::attempt($credentials) || !User::checkUserActive($request->user)) {
+        if((!$token = Auth::attempt($credentials) )|| (!User::checkUserActive($request->user))) {
             //login failed
             return response()->json([
                 'ok' => false,
