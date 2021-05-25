@@ -62,6 +62,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $date = new DateTime();
         $date = $date->format('Y-m-d H:i:s');
         DB::update("UPDATE users SET is_online = 0, last_online = '$date' WHERE user ='$user'");
+
+        return "set offline";
+
     }
 
     public static function checkUsersNotifications($data)

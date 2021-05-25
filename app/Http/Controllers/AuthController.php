@@ -86,10 +86,14 @@ class AuthController extends Controller
                 "message" => "Unauthorized"],200);
         }
 
+        User::setOnline($request->user);
+
         return $this->respondWithToken($token);
     }
 
-    public function logout() {
+    public function logout(Request $request) {
+        
+        User::setOffline($request->user_id);
         Auth::guard()->logout();
         return response()->json([
             'ok' => true,
