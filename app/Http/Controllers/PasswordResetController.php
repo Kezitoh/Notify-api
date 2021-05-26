@@ -124,8 +124,10 @@ class PasswordResetController extends Controller
 
     public function resetPassword(Request $request) {
 
-        if( !$this->confirmReset($request)->getData()->ok ) {
-            return $this->confirmReset($request)->throwResponse();
+        if($request->has('code')) {
+            if( !$this->confirmReset($request)->getData()->ok ) {
+                return $this->confirmReset($request)->throwResponse();
+            }
         }
 
         $this->validate($request, [

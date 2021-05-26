@@ -26,6 +26,7 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
+    /* Devuelve un json con el token */
     public function respondWithToken($token)
     {
         
@@ -38,6 +39,7 @@ class AuthController extends Controller
         ], 200);
     }
 
+    /** Crea un usuario nuevo */
     public function register(Request $request) {
 
         $this->validate($request, [
@@ -71,6 +73,7 @@ class AuthController extends Controller
 
     }
 
+    /** Valida los credenciales del usuario y le otorga un token si son correctos */
     public function login(Request $request) {
         $this->validate($request, [
             "user" => "required|string",
@@ -91,19 +94,22 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    /* Llama a setOffline y devuelve una respuesta */ 
     public function logout(Request $request) {
         
         User::setOffline($request->user_id);
-        Auth::guard()->logout();
+        // Auth::guard()->logout();
         return response()->json([
             'ok' => true,
             "message" => "User succesfully signed out"]);
     }
 
+    /* Refresca el token para que no caduque */
     public function refresh(Request $request) {
         return $this->respondWithToken(auth()->refresh());
     }
 
+    /** Devuelve información del usuario logeado por via del JWT */
     public function me(Request $request) {
 
         $id = $request->sub;
