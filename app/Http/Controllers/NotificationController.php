@@ -25,30 +25,41 @@ class NotificationController extends Controller
         $has_id = $request->has('id');
         $has_user = $request->has('user');
         $has_group = $request->has('group');
+        $has_creator = $request->has('creator');
+        $has_filters = $request->has('filters');
 
 
+        if($has_filters) {
+            $n->filters = $request->filters;
+        }
+        
 
 
         if ($has_user) { // Si se le pasa un usuario traerá todas las notificaciones del usuario
+            // dd("Por user");
             $user = $request->input('user');
             $notifications = $n->getNotificationsByUser($user);
             return $notifications;
         } else if ($has_group) { // Si se le pasa un grupo traerá todas las notificaciones que los usuarios de un mismo grupo tengan todos en común (Work In Progress)
+            // dd("Por group");
             $group = $request->input('group');
             $notifications = $n->getNotificationsByGroup($group);
             return $notifications;
         } else if ($has_id) { // Si se le pasa una id traerá la notificación que le corresponda
-            $n->setId($request->id);
+            // dd("Por ID");
+            $n->id = ($request->id);
             $notification = $n->getNotifications();
             return $notification;
+        }else if ($has_creator) {
+            // dd("Por creador");
+            $creator = $request->creator;
+            $notifications = $n->getNotificationsByCreator($creator);
+            return $notifications;
         }
 
         $notifications = $n->getNotifications();
         return $notifications;
     }
-
-
-
 
 
     public function create(Request $request) // Crea una notificación y si se le pasa además un grupo y/o un usuario llama a la función send
@@ -60,18 +71,20 @@ class NotificationController extends Controller
         $text = $request->input('text');
         $title = $request->input('title');
 
+
         if (empty($type) || empty($title) || empty($text)) {
             return false;
         }
 
         $n = new Notification();
 
-        $n->setAttachment($request->has('attachment') && $request->attachment != '' ? $request->input('attachment') : null);
-        $n->setIsActive($request->has('is_active') ? $request->input('is_active') : 1);
+        $n->attachment = ($request->has('attachment') && $request->attachment != '' ? $request->input('attachment') : null);
+        $n->is_active = ($request->has('is_active') ? $request->input('is_active') : 1);
 
-        $n->setType($type);
-        $n->setTitle($title);
-        $n->setText($text);
+        $n->type = $type;
+        $n->title = $title;
+        $n->text = $text;
+        $n->creator = $request->sub;
 
         $res = $n->create();
 
@@ -86,9 +99,6 @@ class NotificationController extends Controller
         }
         return $this->send($request);
     }
-
-
-
 
     public function send(Request $request) // Envía una notificación a uno o varios grupos/usuarios
     {
@@ -105,7 +115,7 @@ class NotificationController extends Controller
 
         $id_notif = $request->input('notification');
 
-        $n->setId($id_notif);
+        $n->id = ($id_notif);
 
         if ($request->has('user') && ($request->user != [''] || $request->user != '')) {
 
@@ -157,8 +167,5 @@ class NotificationController extends Controller
     }
 
 
-    public function downloadAttachment(Request $request)
-    {
-        // $request->has
-    }
+    
 }
