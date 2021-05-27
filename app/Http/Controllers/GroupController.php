@@ -22,4 +22,30 @@ class GroupController extends Controller
         return $Groups;
     }
 
+    public function create(Request $request) {
+
+        
+
+        if( !$request->has('name') || !$request->has('description') ) {
+            return response()->json([
+                'ok' => false,
+                'message' => "Nombre o descripción no especificados."
+            ]);
+        }
+
+        $group = new Group();
+
+        $group->name = $request->name;
+
+        $group->description = $request->description;
+
+        $group->save();
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Grupo creado con éxito.'
+        ]);
+
+    }
+
 }

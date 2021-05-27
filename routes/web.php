@@ -39,8 +39,13 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->post("/notifications/create", 'NotificationController@create');
         
         $router->post("/notifications/send", 'NotificationController@send');
+        
+        $router->post("/upload", "FileController@uploadFile");
 
-    $router->post("/upload", "FileController@uploadFile");
+        $router->post("/groups/create", "GroupController@create");
+
+        $router->post("/types/create", "TypeController@create");
+
     });
     
     

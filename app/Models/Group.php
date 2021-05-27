@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 class Group extends Model
 {
     //
+    public $timestamps=false;
+    
     public function getGroups() {
         if (isset($this->id)) {
             $group = DB::select("SELECT * FROM groups WHERE id = $this->id");

@@ -22,4 +22,34 @@ class TypeController extends Controller
         return $Types;
     }
 
+    public function create(Request $request) {
+
+        
+
+        if( !$request->has('name') || !$request->has('description') ) {
+            return response()->json([
+                'ok' => false,
+                'message' => "Nombre o descripción no especificados."
+            ]);
+        }
+
+        $type = new Type();
+
+        $type->name = $request->name;
+
+        $type->description = $request->description;
+
+        if($request->has('active')) {
+            $type->is_active = $request->active;
+        }        
+
+        $type->save();
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Tipo creado con éxito.'
+        ]);
+
+    }
+
 }

@@ -9,6 +9,8 @@ class Type extends Model
 {
     //
 
+    public $timestamps = false;
+
     public function getTypes() {
         if (isset($this->id)) {
             $type = DB::select("SELECT * FROM types WHERE id = $this->id AND is_active = 1");
