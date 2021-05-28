@@ -167,5 +167,26 @@ class NotificationController extends Controller
     }
 
 
+    public function delete(Request $request) {
+
+        if(!$request->has('id')) {
+            return response()->json([
+                'ok'=> false,
+                'message' => 'No se ha especificado ninguna notificación.'
+            ]);
+        }
+
+        $n = new Notification();
+
+        $n->id = $request->id;
+        $n->delete();
+        
+        return response()->json([
+            'ok' => true,
+            'message' => 'Borrado realizado con éxito.'
+        ]);
+
+    }
+
     
 }

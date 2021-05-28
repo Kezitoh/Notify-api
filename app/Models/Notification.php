@@ -17,10 +17,12 @@ class Notification extends Model
 
     public function getNotifications()
     {
+        $sql = "SELECT n.*, t.name as nametype FROM notifications n JOIN types t ON t.id = n.id_type";
         if (isset($this->id)) {
-            $notifications = DB::select("SELECT * FROM notifications WHERE id = $this->id ");
+            $sql .= " WHERE id = $this->id";
+            $notifications = DB::select($sql);
         }
-        $notifications = DB::select('SELECT * FROM notifications'); // Si no se le pasa nada, simplemente devuelve todas las filas
+        $notifications = DB::select($sql); // Si no se le pasa nada, simplemente devuelve todas las filas
         return $notifications;
     }
 

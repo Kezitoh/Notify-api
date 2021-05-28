@@ -37,6 +37,8 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->post("/users/create", 'UserController@create');
         
         $router->post("/notifications/create", 'NotificationController@create');
+
+        $router->post("/notifications/delete", 'NotificationController@delete');
         
         $router->post("/notifications/send", 'NotificationController@send');
         
