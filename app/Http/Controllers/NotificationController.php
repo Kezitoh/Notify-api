@@ -29,10 +29,10 @@ class NotificationController extends Controller
         $has_filters = $request->has('filters');
 
 
-        if($has_filters) {
+        if ($has_filters) {
             $n->filters = $request->filters;
         }
-        
+
 
 
         if ($has_user) { // Si se le pasa un usuario traerá todas las notificaciones del usuario
@@ -50,7 +50,7 @@ class NotificationController extends Controller
             $n->id = ($request->id);
             $notification = $n->getNotifications();
             return $notification;
-        }else if ($has_creator) {
+        } else if ($has_creator) {
             // dd("Por creador");
             $creator = $request->creator;
             $notifications = $n->getNotificationsByCreator($creator);
@@ -129,20 +129,18 @@ class NotificationController extends Controller
                 for ($i = 0; $i < count($id_users); $i++) {
                     $id_user = $id_users[$i];
                     $data = ['id_notification' => $id_notif, 'id_user' => $id_user];
-                    if(User::checkUsersNotifications($data)) {
-                        
+                    if (User::checkUsersNotifications($data)) {
+
                         array_push($sql_concat, $data);
-        
                     }
                 }
 
                 $n->send($sql_concat);
             } else {
                 $sql = ['id_notification' => $id_notif, 'id_user' => $id_users];
-                    if(User::checkUsersNotifications($sql)) {
-                        $n->send($sql);
-                    }
-                
+                if (User::checkUsersNotifications($sql)) {
+                    $n->send($sql);
+                }
             }
         }
 
@@ -167,26 +165,53 @@ class NotificationController extends Controller
     }
 
 
-    public function delete(Request $request) {
+    public function delete(Request $request)
+    {
 
-        if(!$request->has('id')) {
+        if (!$request->has('id')) {
             return response()->json([
-                'ok'=> false,
+                'ok' => false,
                 'message' => 'No se ha especificado ninguna notificación.'
             ]);
         }
 
         $n = new Notification();
 
-        $n->id = $request->id;
-        $n->delete();
-        
+
+        Notification::deletee($request->id);
+
         return response()->json([
             'ok' => true,
             'message' => 'Borrado realizado con éxito.'
         ]);
-
     }
 
-    
+    public function setFavorite(Request $request)
+    {
+
+        if (
+            !$request->has('notification_id') ||
+            !$request->has('value') ||
+            !$request->has('user_id')
+        ) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Falta información.'
+            ]);
+        }
+
+        $res = Notification::setFavorite($request->notification_id,$request->sub, $request->value);
+        if(!$res) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Ha ocurrido un error actualizando la información'
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Favorito añadido correctamente'
+        ]);
+
+    }
 }

@@ -63,7 +63,6 @@ class Notification extends Model
             if (User::checkUsersNotifications($data)) {
 
                 array_push($sql_compuesta, $data);
-
             }
         }
 
@@ -74,21 +73,20 @@ class Notification extends Model
     public function getNotificationsByUser($user_id)
     {
 
-        $sql ="SELECT n.*, t.name as nametype FROM notifications n " .
-        "JOIN users_notifications un ON n.id = un.id_notification " .
-        "JOIN users u ON un.id_user = u.id " .
-        "JOIN types t ON t.id = n.id_type ".
-        "WHERE u.id = $user_id AND n.is_active = 1 ";
+        $sql = "SELECT n.*, t.name as nametype, un.* FROM notifications n " .
+            "JOIN users_notifications un ON n.id = un.id_notification " .
+            "JOIN users u ON un.id_user = u.id " .
+            "JOIN types t ON t.id = n.id_type " .
+            "WHERE u.id = $user_id AND n.is_active = 1 ";
 
-        if(isset($this->filters)) {
+        if (isset($this->filters)) {
 
             $filter = $this->filters;
-            
-            $filter = join(",",$filter);
+
+            $filter = join(",", $filter);
             $sql .= " AND t.id IN ($filter) ORDER BY n.created DESC";
             $notifications = DB::select($sql);
             return $notifications;
-            
         }
         $sql .= "ORDER BY n.created DESC";
 
@@ -99,28 +97,27 @@ class Notification extends Model
     }
 
 
-    public function getNotificationsByCreator($creator) {
-        
+    public function getNotificationsByCreator($creator)
+    {
+
         $sql = "SELECT n.*, t.name as nametype FROM notifications n " .
-        "JOIN users u ON n.creator = u.id " .
-        "JOIN types t ON t.id = n.id_type ".
-        "WHERE u.id = $creator AND n.is_active = 1 "; 
-        
-        if(isset($this->filters)) {
+            "JOIN users u ON n.creator = u.id " .
+            "JOIN types t ON t.id = n.id_type " .
+            "WHERE u.id = $creator AND n.is_active = 1 ";
+
+        if (isset($this->filters)) {
 
             $filter = $this->filters;
-            
-            $filter = join(",",$filter);
+
+            $filter = join(",", $filter);
             $sql .= " AND t.id IN ($filter) ORDER BY n.created DESC";
             $notifications = DB::select($sql);
             return $notifications;
-
         }
         $sql .= "ORDER BY n.created DESC";
         $notifications = DB::select($sql);
 
         return $notifications;
-        
     }
 
 
@@ -141,6 +138,32 @@ class Notification extends Model
         // ->where('u.id_group','=',$group_id)
         // ->dd();
 
+
+        return $res;
+    }
+
+    public static function deletee($id)
+    {
+
+        $res = DB::delete("DELETE FROM notifications WHERE id = $id");
+
+        if (!$res) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'El registro no ha podido eliminarse'
+            ]);
+        }
+        return response()->json([
+            'ok' => true,
+            'message' => 'Registro eliminado con éxito'
+        ]);
+    }
+
+    public static function setFavorite($notif_id, $user_id, $value)
+    {
+        $sql = "UPDATE users_notifications SET fav = $value WHERE id_notification = $notif_id AND id_user = $user_id";
+        
+        $res = DB::update($sql);
 
         return $res;
     }
