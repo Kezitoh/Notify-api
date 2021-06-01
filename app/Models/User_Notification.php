@@ -43,4 +43,11 @@ class User_Notification extends Model
 
     }
 
+    public static function getUsersNotificationsByNotification($id) {
+        $res = DB::select("SELECT un.*, CONCAT(u.name,' ', u.surname) as nombre FROM users_notifications un JOIN users u ON u.id = un.id_user WHERE un.id_notification = $id ORDER BY un.datetime_downloaded ASC, un.datetime_read ASC");
+        // dd($res);
+        return $res;
+
+    }
+
 }

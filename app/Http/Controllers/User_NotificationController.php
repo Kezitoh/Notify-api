@@ -87,4 +87,28 @@ class User_NotificationController extends Controller
 
     }
 
+    public function getUsersNotificationsByNotification(Request $request) {
+        if(!$request->has('id')) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se especificó notificación'
+            ]);
+        }
+
+        $res = User_Notification::getUsersNotificationsByNotification($request->id);
+
+        if(!$res && $res != []) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Ha ocurrido un error con la operación'
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'Users_Notifications' => $res
+        ]);
+
+    }
+
 }

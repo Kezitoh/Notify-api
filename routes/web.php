@@ -34,11 +34,13 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
     $router->post("/notifications/fav", "User_NotificationController@setFavorite");
 
+    $router->post("/users_notifications/read", "User_NotificationController@read");
+
+    $router->post("/users_notifications/download", "User_NotificationController@download");
     $router->group(['middleware' => 'admin'], function () use ($router) {
 
-        $router->post("/users_notifications/read", "User_NotificationController@read");
 
-        $router->post("/users_notifications/download", "User_NotificationController@download");
+        $router->get("/users_notifications", "User_NotificationController@getUsersNotificationsByNotification");
 
         $router->post("/users/create", 'UserController@create');
 
