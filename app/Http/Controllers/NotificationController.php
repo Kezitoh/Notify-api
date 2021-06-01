@@ -186,32 +186,4 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function setFavorite(Request $request)
-    {
-
-        if (
-            !$request->has('notification_id') ||
-            !$request->has('value') ||
-            !$request->has('user_id')
-        ) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Falta información.'
-            ]);
-        }
-
-        $res = Notification::setFavorite($request->notification_id,$request->sub, $request->value);
-        if(!$res) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Ha ocurrido un error actualizando la información'
-            ]);
-        }
-
-        return response()->json([
-            'ok' => true,
-            'message' => 'Favorito añadido correctamente'
-        ]);
-
-    }
 }

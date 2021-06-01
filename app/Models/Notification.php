@@ -73,7 +73,7 @@ class Notification extends Model
     public function getNotificationsByUser($user_id)
     {
 
-        $sql = "SELECT n.*, t.name as nametype, un.* FROM notifications n " .
+        $sql = "SELECT n.*, t.name as nametype, un.id as user_notification_id, un.fav, un.is_read, un.is_downloaded, un.datetime_downloaded, un.datetime_read FROM notifications n " .
             "JOIN users_notifications un ON n.id = un.id_notification " .
             "JOIN users u ON un.id_user = u.id " .
             "JOIN types t ON t.id = n.id_type " .
@@ -159,12 +159,5 @@ class Notification extends Model
         ]);
     }
 
-    public static function setFavorite($notif_id, $user_id, $value)
-    {
-        $sql = "UPDATE users_notifications SET fav = $value WHERE id_notification = $notif_id AND id_user = $user_id";
-        
-        $res = DB::update($sql);
-
-        return $res;
-    }
+    
 }
