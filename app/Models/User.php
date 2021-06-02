@@ -109,4 +109,38 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return false;
     }
 
+    public static function toggleActive($id, $value) {
+
+        $res = DB::update("UPDATE users SET is_active = $value WHERE id = $id");
+
+        return $res;
+
+    }
+
+    public static function edit($id, $values) {
+
+        $sql = "UPDATE users u SET";
+        $index =0;
+        foreach($values as $key => $value) {
+            if($index == count($values)-1) {
+                $sql .= " u.$key = '$value'";
+            }else {
+                $sql .= " u.$key = '$value',";
+            }
+            $index++;
+        }
+        $sql .= " WHERE id = $id";
+        
+        $res = DB::update($sql);
+        return $res;
+    }
+
+    public static function deletee($id) {
+        $res = DB::delete("DELETE FROM users WHERE id = $id");
+
+        return $res;
+    }
+
+
+
 }

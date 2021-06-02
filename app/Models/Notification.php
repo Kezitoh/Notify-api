@@ -77,7 +77,7 @@ class Notification extends Model
             "JOIN users_notifications un ON n.id = un.id_notification " .
             "JOIN users u ON un.id_user = u.id " .
             "JOIN types t ON t.id = n.id_type " .
-            "WHERE u.id = $user_id AND n.is_active = 1 ";
+            "WHERE u.id = $user_id AND n.is_active = 1 AND t.is_active = 1 ";
 
         if (isset($this->filters)) {
 
@@ -103,7 +103,7 @@ class Notification extends Model
         $sql = "SELECT n.*, t.name as nametype FROM notifications n " .
             "JOIN users u ON n.creator = u.id " .
             "JOIN types t ON t.id = n.id_type " .
-            "WHERE u.id = $creator AND n.is_active = 1 ";
+            "WHERE u.id = $creator ";
 
         if (isset($this->filters)) {
 
@@ -159,5 +159,12 @@ class Notification extends Model
         ]);
     }
 
+    public static function toggleActive($id, $value) {
+
+        $res = DB::update("UPDATE notifications SET is_active = $value WHERE id = $id");
+
+        return $res;
+
+    }
     
 }

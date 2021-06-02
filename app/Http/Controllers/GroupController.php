@@ -39,11 +39,91 @@ class GroupController extends Controller
 
         $group->description = $request->description;
 
+        if ($request->has('active')) {
+            $group->is_active = $request->active;
+        }
+
         $group->save();
 
         return response()->json([
             'ok' => true,
             'message' => 'Grupo creado con éxito.'
+        ]);
+
+    }
+
+    public function delete(Request $request)
+    {
+
+        if (!$request->has('id')) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se ha especificado el Grupo'
+            ]);
+        }
+
+        $res = Group::deletee($request->id);
+        if (!$res) {
+
+            return response()->json([
+                'ok' => false,
+                'message' => 'La operación no se ha realizado correctamente'
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Grupo borrado correctamente'
+        ]);
+    }
+
+    public function toggleActive(Request $request)
+    {
+
+        if (!$request->has('id') || !$request->has('value')) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se han especificado todos los datos'
+            ]);
+        }
+
+        $res = Group::toggleActive($request->id, $request->value);
+
+        if (!$res) {
+
+            return response()->json([
+                'ok' => false,
+                'message' => 'La operación no se ha realizado correctamente'
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'El registro se ha actualizado correctamente'
+        ]);
+    }
+
+    public function edit(Request $request) {
+        if(!$request->has('id')) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se ha especificado el tipo'
+            ]);
+        }
+
+        $res = Group::edit($request->id, $request->values);
+
+        if (!$res) {
+
+            return response()->json([
+                'ok' => false,
+                'message' => 'La operación no se ha realizado correctamente'
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'El registro se ha actualizado correctamente'
         ]);
 
     }

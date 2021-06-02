@@ -186,4 +186,30 @@ class NotificationController extends Controller
         ]);
     }
 
+    public function toggleActive(Request $request)
+    {
+
+        if (!$request->has('id') || !$request->has('value')) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se han especificado todos los datos'
+            ]);
+        }
+
+        $res = Notification::toggleActive($request->id, $request->value);
+
+        if (!$res) {
+
+            return response()->json([
+                'ok' => false,
+                'message' => 'La operación no se ha realizado correctamente'
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'El registro se ha actualizado correctamente'
+        ]);
+    }
+
 }
