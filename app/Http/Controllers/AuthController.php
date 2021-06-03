@@ -49,7 +49,6 @@ class AuthController extends Controller
         ]);
 
         try{
-            $request->request->add(['password' => 'prueba']);
             $userCtrl = new UserController();
             $user = $userCtrl->create($request);
             if(!$user) {
@@ -60,14 +59,16 @@ class AuthController extends Controller
                 ]);
             }
             return response()->json([
+                'ok' => true,
                 "user" => $user, 
                 "message" => "CREATED"
             ], 201);
 
         }catch (Exception $e) {
             return response()->json([
-                "message" => "User registration failed.",
-                "error" => $e->getMessage()
+                'ok' => false,
+                "error" => $e->getMessage(),
+                "message" => "User registration failed."
             ]);
         }
 

@@ -43,11 +43,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getUsers()
     {
         if (isset($this->id)) {
-            $user = DB::select("SELECT * FROM users WHERE id = $this->id");
+            $user = DB::select("SELECT u.*, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role WHERE u.id = $this->id");
             return $user;
         }
 
-        $users = DB::select('SELECT * from users');
+        $users = DB::select('SELECT u.*, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role');
 
         return $users;
     }

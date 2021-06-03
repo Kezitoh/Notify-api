@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -45,7 +44,7 @@ class UserController extends Controller
         $user->id_role = ($request->input('id_role'));
         $user->user = $request->input("user");
         $plainPassword = $request->input("password");
-        $user->password = app("hash")->make($plainPassword);
+        $user->password = Hash::make($plainPassword,['rounds' => 13]);
         $user->name = ($request->input('name'));
         $user->surname = ($request->input('surname'));
         $request->has('email')? $user->email = ($request->input('email')) : null;

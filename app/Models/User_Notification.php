@@ -17,9 +17,9 @@ class User_Notification extends Model
     public static function setFavorite($notif_id, $user_id, $value)
     {
         $sql = "UPDATE users_notifications SET fav = $value WHERE id_notification = $notif_id AND id_user = $user_id";
-        
+        // dd($sql);
         $res = DB::update($sql);
-
+        // dd($res);
         return $res;
     }
 
@@ -28,7 +28,7 @@ class User_Notification extends Model
         $now = date('Y-m-d H:i:s');
 
         $res = DB::update("UPDATE users_notifications SET is_read = 1, datetime_read = '$now' WHERE id = $id");
-    
+
         return $res;
 
     }
