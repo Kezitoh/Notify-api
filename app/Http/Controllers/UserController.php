@@ -15,13 +15,26 @@ class UserController extends Controller
         $u = new User();
         
         if($request->has('id')) {
-            $u->id = ($request->id);
-            return User::where('id', $request->input('id'))->first();
-
+            $u->id = $request->id;
+            $res = $u->getUsers();
+            return response()->json([
+                'ok' => true,
+                'users' => $res
+            ]);
+        }else if($request->has('group')) {
+            $u->group = $request->group;
+            $res = $u->getUsers();
+            return response()->json([
+                'ok' => true,
+                'users' => $res
+            ]);
         }
         
         $users = $u->getUsers();
-        return $users;
+        return response()->json([
+            'ok' => true,
+            'users' => $users
+        ]);
 
     }
 

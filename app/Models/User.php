@@ -43,11 +43,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getUsers()
     {
         if (isset($this->id)) {
-            $user = DB::select("SELECT u.id,u.name,u.surname,u.user, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role WHERE u.id = $this->id");
+            $user = DB::select("SELECT u.id,u.name,u.surname,u.user, u.is_active, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role WHERE u.id = $this->id");
             return $user;
+        }else if(isset($this->group)){
+            $users = DB::select("SELECT u.id, u.name, u.surname, u.user,  u.is_active, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role WHERE g.id = $this->group");
+            return $users;
         }
 
-        $users = DB::select('SELECT u.id,u.name,u.surname,u.user, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role');
+        $users = DB::select('SELECT u.id,u.name,u.surname,u.user, u.is_active, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role');
 
         return $users;
     }
