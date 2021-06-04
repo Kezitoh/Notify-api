@@ -128,6 +128,7 @@ class NotificationController extends Controller
 
                 for ($i = 0; $i < count($id_users); $i++) {
                     $id_user = $id_users[$i];
+                    
                     $data = ['id_notification' => $id_notif, 'id_user' => $id_user];
                     if (User::checkUsersNotifications($data)) {
 

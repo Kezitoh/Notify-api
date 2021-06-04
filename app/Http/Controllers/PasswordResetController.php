@@ -101,10 +101,8 @@ class PasswordResetController extends Controller
             ], 400);
         }
 
-        $code = $request->code;
-        $user_user = $request->user;
-        $user = DB::connection('mysql')->table('users')->select('id')->where('user', '=', $user_user)->get();
-        $user_id = $user[0]->id;
+        $code = $request->code;        
+        $user_id = $request->user_id;
         $now = new DateTime();
         $now_formatted =$now->format('Y/m/d H:m:s');
     
@@ -124,6 +122,9 @@ class PasswordResetController extends Controller
 
     public function resetPassword(Request $request) {
 
+        $user = DB::connection('mysql')->table('users')->select('id')->where('user', '=', $request->user)->get();
+        $request->request->add(['user_id' => $user[0]->id]);
+
         if($request->has('code')) {
             if( !$this->confirmReset($request)->getData()->ok ) {
                 return $this->confirmReset($request)->throwResponse();
@@ -137,6 +138,11 @@ class PasswordResetController extends Controller
         ]);
         
         DB::connection('mysql')->table('users')->where('user','=',$request->user)->update(['password' => app("hash")->make($request->password)]);
+
+        if(!$request->has('code')) {
+            User::setLogged($request->user);
+        }
+
         return response()->json([
             'ok' => true,
             'message' => 'Acción realizada exitosamente'

@@ -87,7 +87,7 @@ class AuthController extends Controller
             //login failed
             return response()->json([
                 'ok' => false,
-                "message" => "Unauthorized"],200);
+                "message" => "Unauthorized"],401);
         }
 
         User::setOnline($request->user);
