@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\token_user;
 use App\Models\User;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -32,8 +33,8 @@ class PasswordResetController extends Controller
         $token = Str::random(6);
 
         $token_user = new token_user();
-        
-        $datetime = date_add(new Datetime(), date_interval_create_from_date_string('10 minutes'));
+        $cest = new DateTimeZone('CEST');
+        $datetime = date_add(new Datetime('now', $cest), date_interval_create_from_date_string('10 minutes'));
         
         $user = DB::connection('mysql')->table('users')->select('*')->where('user','=', $user_code)->limit(1)->get();
         if(empty($user[0])) {
@@ -80,7 +81,8 @@ class PasswordResetController extends Controller
             <p><h3>Si no has sido tú, simplemente ignora este mensaje.</h3></p>
             <br>
             <p>Para proceder a cambiar tu contraseña, pon el siguiente código en el campo indicado en la app: '.$token.'</p>
-        
+            <br>
+            <p>Este código será valido por 10 minutos.</p>
         </body>
         </html>';
         $mail->send();
@@ -100,37 +102,32 @@ class PasswordResetController extends Controller
                 "message" => "Código y/o usuario no especificados."
             ], 400);
         }
+        $user = DB::connection('mysql')->table('users')->select('id')->where('user', '=', $request->user)->get();
+        $request->request->add(['user_id' => $user[0]->id]);
 
         $code = $request->code;        
         $user_id = $request->user_id;
+
+
+        //  dd($request->user_id);
         $now = new DateTime();
         $now_formatted =$now->format('Y/m/d H:m:s');
     
-        $res = DB::select("SELECT tu.* FROM token_users tu JOIN users u on u.id = tu.id_user where id_user = $user_id AND expiration_date = (SELECT MAX(expiration_date) from token_users where id_user = $user_id) AND expiration_date > '$now_formatted' AND u.is_active = 1");
+        $res = DB::select("SELECT tu.* FROM token_users tu JOIN users u on u.id = tu.id_user where tu.id_user = $request->user_id AND expiration_date = (SELECT MAX(expiration_date) from token_users where id_user =$request->user_id) AND expiration_date > '$now_formatted' AND u.is_active = 1");
         if( empty($res[0]) || !Hash::check($code,$res[0]->token ) ) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Confirmación fallida.'
+                'message' => 'Fallo en la autenticación'
             ]);
         }
         return response()->json([
-            "ok" => true,
-            'message' => 'Confirmación completada con éxito.'
+            'ok' => true,
+            'message'=> 'Confirmación realizada con éxito'
         ]);
 
     }
 
     public function resetPassword(Request $request) {
-
-        $user = DB::connection('mysql')->table('users')->select('id')->where('user', '=', $request->user)->get();
-        $request->request->add(['user_id' => $user[0]->id]);
-
-        if($request->has('code')) {
-            if( !$this->confirmReset($request)->getData()->ok ) {
-                return $this->confirmReset($request)->throwResponse();
-            }
-        }
-
         $this->validate($request, [
             "password" => ["required","string","confirmed","min:6", "max:8", "regex:/([a-zA-Z][0-9]|[0-9][a-zA-Z])/"],
             "password_confirmation" => ["required","string","min:6", "max:8", "regex:/([a-zA-Z][0-9]|[0-9][a-zA-Z])/"],
