@@ -29,34 +29,33 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->get('/types', 'TypeController@getTypes');
     $router->get('/groups', 'GroupController@getGroups');
     $router->get("/notifications", 'NotificationController@getNotifications');
-    
+
     $router->get("/download", "FileController@downloadFile");
-    
-    $router->group(['middleware' => 'admin'], function() use ($router){
-        
+
+    $router->post("/notifications/fav", "NotificationController@setFavorite");
+
+    $router->group(['middleware' => 'admin'], function () use ($router) {
+
         $router->post("/users/create", 'UserController@create');
-        
+
         $router->post("/notifications/create", 'NotificationController@create');
 
         $router->post("/notifications/delete", 'NotificationController@delete');
-        
+
         $router->post("/notifications/send", 'NotificationController@send');
-        
+
         $router->post("/upload", "FileController@uploadFile");
 
         $router->post("/groups/create", "GroupController@create");
 
         $router->post("/types/create", "TypeController@create");
-
     });
-    
-    
+
+
     $router->get("/me", "AuthController@me");
     $router->post("/logout", "AuthController@logout");
     $router->get("/refresh", "AuthController@refresh");
     $router->post("/refresh", "AuthController@refresh");
-
-
 });
 $router->post("/sendReset", "PasswordResetController@sendResetCode");
 $router->post("/register", "AuthController@register");
