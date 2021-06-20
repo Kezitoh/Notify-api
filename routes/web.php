@@ -32,9 +32,35 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
     $router->get("/download", "FileController@downloadFile");
 
-    $router->post("/notifications/fav", "NotificationController@setFavorite");
+    $router->post("/notifications/fav", "User_NotificationController@setFavorite");
 
+    $router->post("/users_notifications/read", "User_NotificationController@read");
+
+    $router->post("/users_notifications/download", "User_NotificationController@download");
+    
     $router->group(['middleware' => 'admin'], function () use ($router) {
+
+        $router->post("/users/delete", "UserController@delete");
+
+        $router->post("/types/delete", "TypeController@delete");
+
+        $router->post("/groups/delete", "GroupController@delete");
+
+        $router->post("/users/toggleActive", "UserController@toggleActive");
+
+        $router->post("/types/toggleActive", "TypeController@toggleActive");
+
+        $router->post("/groups/toggleActive", "GroupController@toggleActive");
+
+        $router->post("/notifications/toggleActive", "NotificationController@toggleActive");
+
+        $router->post("/users/edit", "UserController@edit");
+
+        $router->post("/types/edit", "TypeController@edit");
+
+        $router->post("/groups/edit", "GroupController@edit");
+
+        $router->get("/users_notifications", "User_NotificationController@getUsersNotificationsByNotification");
 
         $router->post("/users/create", 'UserController@create');
 

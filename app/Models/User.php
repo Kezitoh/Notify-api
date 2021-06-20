@@ -43,19 +43,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getUsers()
     {
         if (isset($this->id)) {
-            $user = DB::select("SELECT * FROM users WHERE id = $this->id");
+            $user = DB::select("SELECT u.id,u.name,u.surname,u.user, u.is_active, u.email, u.last_online, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role WHERE u.id = $this->id");
             return $user;
+        }else if(isset($this->group)){
+            $users = DB::select("SELECT u.id, u.name, u.surname, u.user,  u.is_active, u.email, u.last_online, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role WHERE g.id = $this->group");
+            return $users;
         }
 
-        $users = DB::select('SELECT * from users');
+        $users = DB::select('SELECT u.id,u.name,u.surname,u.user, u.is_active, u.email, u.last_online, r.name as role_name, g.name as group_name FROM users u JOIN groups g ON g.id = u.id_group JOIN roles r ON r.id = u.id_role');
 
         return $users;
     }
 
     public static function setOnline($user) {
         
-        DB::update("UPDATE users SET is_online = 1 WHERE user = '$user'");
-
+        $res =DB::update("UPDATE users SET is_online = 1 WHERE user = '$user'");
+        return $res;
     }
 
     public static function setOffline($user)  {
@@ -64,6 +67,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         DB::update("UPDATE users SET is_online = 0, last_online = '$date' WHERE user ='$user'");
 
         return "set offline";
+
+    }
+
+    public static function setLogged($user) {
+        
+        $res =DB::update("UPDATE users SET has_logged = 1 WHERE user = '$user'");
+        return $res;
 
     }
 
@@ -108,5 +118,39 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         return false;
     }
+
+    public static function toggleActive($id, $value) {
+
+        $res = DB::update("UPDATE users SET is_active = $value WHERE id = $id");
+
+        return $res;
+
+    }
+
+    public static function edit($id, $values) {
+
+        $sql = "UPDATE users u SET";
+        $index =0;
+        foreach($values as $key => $value) {
+            if($index == count($values)-1) {
+                $sql .= " u.$key = '$value'";
+            }else {
+                $sql .= " u.$key = '$value',";
+            }
+            $index++;
+        }
+        $sql .= " WHERE id = $id";
+        
+        $res = DB::update($sql);
+        return $res;
+    }
+
+    public static function deletee($id) {
+        $res = DB::delete("DELETE FROM users WHERE id = $id");
+
+        return $res;
+    }
+
+
 
 }
