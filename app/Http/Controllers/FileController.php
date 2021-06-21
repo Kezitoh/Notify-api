@@ -20,13 +20,18 @@ class FileController extends Controller
                 'message' => 'No se adjuntó ningún archivo'
             ]);
         }
-
+        
+        $file = $request->file('file');
 
         // $date = new DateTime();
         // $name = $date->format("YmdHis") . $request->file('file')->getClientOriginalName();
-        $name = $request->file('file')->getClientOriginalName();
+        $name = $file->getClientOriginalName();
 
-        $request->file('file')->move($this->destinationPath, $name);
+        $res = $file->move($this->destinationPath, $name);
+        return response()->json([
+            'ok' => true,
+            'res' => $res
+        ]);
     }
 
     public function downloadFile(Request $request)
@@ -40,9 +45,9 @@ class FileController extends Controller
         }
 
         $filename = $request->filename;
-        $path = $this->destinationPath.$filename;
+        $path = $this->destinationPath . $filename;
 
-        $response = new BinaryFileResponse($path, 200,[],true,'attachment');
+        $response = new BinaryFileResponse($path, 200, [], true, 'attachment');
 
         return $response;
         // response()->download($this->destinationPath.$filename, $filename);

@@ -132,33 +132,33 @@ class NotificationController extends Controller
 
     {
 
-        if(!$request->attachpc){
+        // if(!$request->attachpc){
 
-           $attach = $request->attachment;
+        //    $attach = $request->attachment;
 
-        }else{
+        // }else{
 
           
 
             
 
-            $attach = $request->attachpc;
+        //     $attach = $request->attachpc;
 
-            $f = fopen('attachments_/'.$attach, "w");
+        //     $f = fopen('attachments_/'.$attach, "w");
 
 
 
-            // guardamos en el archivo el contenido que hay despues de la coma
+        //     // guardamos en el archivo el contenido que hay despues de la coma
 
-            fwrite($f, base64_decode(explode(",", $request->attachment, 2)[1]));
+        //     fwrite($f, base64_decode(explode(",", $request->attachment, 2)[1]));
 
              
 
-            fclose($f);
+        //     fclose($f);
 
-        }
+        // }
 
-
+        
 
         $type = $request->input('type');
 
